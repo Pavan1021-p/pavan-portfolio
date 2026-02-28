@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { Pool } from "pg";
 
+export const dynamic = 'force-dynamic';
+
 const pool = new Pool({
     connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.PRISMA_DATABASE_URL,
     ssl: { rejectUnauthorized: false } // Required for Vercel Serverless Postgres
