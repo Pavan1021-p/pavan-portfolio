@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
 import { Pool } from 'pg';
 
-// Configure your PostgreSQL connection here or use environment variables
-// Ensure DATABASE_URL is set in your .env file
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
+    connectionString: process.env.POSTGRES_URL || process.env.DATABASE_URL || process.env.PRISMA_DATABASE_URL,
+    ssl: { rejectUnauthorized: false } // Required for Vercel Serverless Postgres
 });
 
 export async function POST(req: Request) {
@@ -16,10 +15,9 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        // Insert into PostgreSQL
         const client = await pool.connect();
         try {
-            const queryText = 'INSERT INTO messages(name, email, message) VALUES($1, $2, $3) RETURNING id';
+            const queryText = 'INSERT INTO contact_messages(name, email, message) VALUES($1, $2, $3) RETURNING id';
             const values = [name, email, message];
             const result = await client.query(queryText, values);
 
